@@ -1,0 +1,38 @@
+# Please set 'QIITA_TOKEN' secret to your repository
+name: Publish articles
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "public/**"
+      - "qiita.config.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish_articles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Skip publish for commits pushed by this workflow (ID push-back)
+    if: github.event.head_commit.author.name != 'github-actions[bot]'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # increments/qiita-cli/actions/publish@v1 handles:
+      # 1. Publishing articles to Qiita
+      # 2. Writing back article IDs to Front Matter
+      # 3. Committing and pushing the ID changes
+      # This prevents duplicate article creation on subsequent pushes.
+      - uses: increments/qiita-cli/actions/publish@v1
+        with:
+          qiita-token: ${{ secrets.QIITA_TOKEN }}
+          root: "."
