@@ -34,11 +34,15 @@ try {
     // Replace private: false with private: true
     if (content.includes('private: false')) {
       content = content.replace('private: false', 'private: true');
-      fs.writeFileSync(newestFile, content, 'utf-8');
-      console.log(`✅ Successfully set 'private: true' in ${files[0].name}`);
-    } else {
-      console.log(`⚠️ 'private: false' not found in frontmatter. Check manually.`);
     }
+    
+    // Set a default tag so GitHub Actions won't fail if the user forgets to set one
+    if (content.includes("tags:\n  - ''")) {
+      content = content.replace("tags:\n  - ''", "tags:\n  - 'Draft'");
+    }
+
+    fs.writeFileSync(newestFile, content, 'utf-8');
+    console.log(`✅ Successfully configured ${files[0].name} (private: true, tags: Draft)`);
   }
 
 } catch (error) {

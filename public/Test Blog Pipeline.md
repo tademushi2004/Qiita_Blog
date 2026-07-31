@@ -1,7 +1,7 @@
 ---
 title: Test Blog Pipeline
 tags:
-  - ''
+  - 'Test'
 private: true
 updated_at: ''
 id: null
