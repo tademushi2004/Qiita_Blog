@@ -1,14 +1,14 @@
 ---
 title: 画像管理の手間をゼロにするQiita x Husky 爆速執筆パイプライン
 tags:
-  - 'Qiita'
-  - 'Husky'
-  - 'GitHubActions'
-  - '自動化'
-  - 'Markdown'
+  - Qiita
+  - husky
+  - GitHubActions
+  - 自動化
+  - Markdown
 private: true
-updated_at: ''
-id: null
+updated_at: '2026-08-01T07:05:51+09:00'
+id: 2c7e9990834118094eac
 organization_url_name: null
 slide: false
 ignorePublish: false
