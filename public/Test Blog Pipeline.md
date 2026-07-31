@@ -1,10 +1,10 @@
 ---
 title: Test Blog Pipeline
 tags:
-  - 'Test'
+  - テスト
 private: true
-updated_at: ''
-id: null
+updated_at: '2026-07-31T22:56:59+09:00'
+id: 650550ded131eef474ef
 organization_url_name: null
 slide: false
 ignorePublish: false
