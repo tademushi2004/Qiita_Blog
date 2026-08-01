@@ -15,6 +15,7 @@ import argparse
 import os
 import re
 import sys
+import urllib.parse
 from pathlib import Path
 
 from PIL import Image
@@ -107,22 +108,32 @@ def update_markdown_image_paths(public_dir: Path, github_avif_url: str, is_local
 
     if is_local_mode:
         # 執筆モード: GitHub AVIF URL -> images/xxx.png に戻す
-        pattern = re.compile(r'(^|\s|\(|\[)' + re.escape(github_avif_url) + r'/([^\s\)]+)\.avif')
-        replacement = r'\1images/\2.png'
+        pattern = re.compile(r'(^|\s|\(|\[)' + re.escape(github_avif_url) + r'/([^\)]+?)\.avif')
+        def repl_local(m):
+            filename = urllib.parse.unquote(m.group(2))
+            return f"{m.group(1)}images/{filename}.png"
+        
+        for md_file in public_dir.glob("*.md"):
+            content = md_file.read_text(encoding="utf-8")
+            new_content, count = pattern.subn(repl_local, content)
+            if count > 0:
+                md_file.write_text(new_content, encoding="utf-8")
+                print(f"  [URL] {md_file.name}: {count} image path(s) updated")
+                total_replacements += count
     else:
         # 公開モード: images/xxx.(png|jpg|jpeg) -> GitHub AVIF URL にする
-        pattern = re.compile(r'(^|\s|\(|\[)images/([^\s\)]+)\.(png|jpg|jpeg)')
-        replacement = rf'\1{github_avif_url}/\2.avif'
-
-    for md_file in public_dir.glob("*.md"):
-        content = md_file.read_text(encoding="utf-8")
-
-        new_content, count = pattern.subn(replacement, content)
-
-        if count > 0:
-            md_file.write_text(new_content, encoding="utf-8")
-            print(f"  [URL] {md_file.name}: {count} image path(s) updated")
-            total_replacements += count
+        pattern = re.compile(r'(^|\s|\(|\[)images/([^\)]+?)\.(png|jpg|jpeg)')
+        def repl_remote(m):
+            filename = urllib.parse.quote(m.group(2))
+            return f"{m.group(1)}{github_avif_url}/{filename}.avif"
+        
+        for md_file in public_dir.glob("*.md"):
+            content = md_file.read_text(encoding="utf-8")
+            new_content, count = pattern.subn(repl_remote, content)
+            if count > 0:
+                md_file.write_text(new_content, encoding="utf-8")
+                print(f"  [URL] {md_file.name}: {count} image path(s) updated")
+                total_replacements += count
 
     return total_replacements
 
