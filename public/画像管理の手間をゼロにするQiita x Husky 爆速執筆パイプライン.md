@@ -6,7 +6,7 @@ tags:
   - GitHubActions
   - 自動化
   - husky
-private: true
+private: false
 updated_at: '2026-08-01T16:28:20+09:00'
 id: 2c7e9990834118094eac
 organization_url_name: null
