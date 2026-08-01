@@ -1,13 +1,13 @@
 ---
 title: エディタから一歩も出ない。Qiita CLI × GitHub連携で叶える、記事もAVIF画像もまるごと一元管理
 tags:
-  - 'QiitaCLI'
-  - 'GitHub'
-  - 'GitHubActions'
-  - '自動化'
-  - 'Husky'
+  - QiitaCLI
+  - GitHub
+  - GitHubActions
+  - 自動化
+  - husky
 private: true
-updated_at: '2026-08-01T07:05:51+09:00'
+updated_at: '2026-08-01T15:49:17+09:00'
 id: 2c7e9990834118094eac
 organization_url_name: null
 slide: false
