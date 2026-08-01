@@ -32,12 +32,15 @@ agreed_posting_campaign_term: false
 4. **お金をかけずに実現したい**（全部無料で済むこと）
 5. **APIトークンなどのセキュリティも安心して運用したい**
 
-「全部叶えるのはさすがに欲張りすぎじゃない？」と思いますよね。
-でも、できちゃったんです。
+そして、以下のような執筆環境を構築することにしました。
+
+:::note info
+このブログは、その環境を使って書かれています。
+:::
 
 ## こんなものを作ってみました
 
-結論から見せます。完成した環境では、執筆体験がこうなります。
+完成した環境では、執筆体験がこうなります。
 
 ```mermaid
 graph LR
@@ -279,7 +282,7 @@ git push origin main
 
 数分後、Qiitaの [マイページ → 記事の管理 → 限定共有](https://qiita.com/mine/articles?type=private) を確認してみてください。「テスト記事」が限定共有として公開されていれば成功です！🎉
 
-![Qiitaでの限定共有記事の表示例](https://raw.githubusercontent.com/tademushi2004/Qiita_Blog/main/public/avif/%E7%94%BB%E5%83%8F%E7%AE%A1%E7%90%86%E3%81%AE%E6%89%8B%E9%96%93%E3%82%92%E3%82%BC%E3%83%AD%E3%81%AB%E3%81%99%E3%82%8BQiita%20x%20Husky%20%E7%88%86%E9%80%9F%E5%9F%B7%E7%AD%86%E3%83%91%E3%82%A4%E3%83%97%E3%83%A9%E3%82%A4%E3%83%B3-01_image.avif)
+<!-- ![Qiitaでの限定共有記事の表示例](https://raw.githubusercontent.com/tademushi2004/Qiita_Blog/main/public/avif/%E7%94%BB%E5%83%8F%E7%AE%A1%E7%90%86%E3%81%AE%E6%89%8B%E9%96%93%E3%82%92%E3%82%BC%E3%83%AD%E3%81%AB%E3%81%99%E3%82%8BQiita%20x%20Husky%20%E7%88%86%E9%80%9F%E5%9F%B7%E7%AD%86%E3%83%91%E3%82%A4%E3%83%97%E3%83%A9%E3%82%A4%E3%83%B3-01_image.avif) -->
 
 ---
 
@@ -456,7 +459,7 @@ my-qiita-blog/
 
 両方OKなら、パイプラインは完璧に動いています！ 🎉
 
-![GitHub Actionsの成功画面](https://raw.githubusercontent.com/tademushi2004/Qiita_Blog/main/public/avif/%E7%94%BB%E5%83%8F%E7%AE%A1%E7%90%86%E3%81%AE%E6%89%8B%E9%96%93%E3%82%92%E3%82%BC%E3%83%AD%E3%81%AB%E3%81%99%E3%82%8BQiita%20x%20Husky%20%E7%88%86%E9%80%9F%E5%9F%B7%E7%AD%86%E3%83%91%E3%82%A4%E3%83%97%E3%83%A9%E3%82%A4%E3%83%B3-02_image.avif)
+<!-- ![GitHub Actionsの成功画面](https://raw.githubusercontent.com/tademushi2004/Qiita_Blog/main/public/avif/%E7%94%BB%E5%83%8F%E7%AE%A1%E7%90%86%E3%81%AE%E6%89%8B%E9%96%93%E3%82%92%E3%82%BC%E3%83%AD%E3%81%AB%E3%81%99%E3%82%8BQiita%20x%20Husky%20%E7%88%86%E9%80%9F%E5%9F%B7%E7%AD%86%E3%83%91%E3%82%A4%E3%83%97%E3%83%A9%E3%82%A4%E3%83%B3-02_image.avif) -->
 
 ---
 
