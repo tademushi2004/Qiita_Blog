@@ -1,0 +1,22 @@
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE settings
+.vscode/
+.idea/
+
+# Source images (PNG/JPG originals - too large for Git)
+src_images/*.png
+src_images/*.jpg
+src_images/*.jpeg
+
+# Node.js
+node_modules/
+
+# Qiita CLI
+.remote/
