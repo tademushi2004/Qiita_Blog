@@ -97,38 +97,27 @@ def cleanup_orphaned_avifs(out_dir: Path, source_stems: set[str]) -> int:
     return deleted_count
 
 
-def update_markdown_image_paths(public_dir: Path, out_dir: Path) -> int:
+def update_markdown_image_paths(public_dir: Path, github_avif_url: str, is_local_mode: bool) -> int:
     """
-    public/ 配下の Markdown ファイル内の画像パスを GitHub Raw URL に変換する。
-
-    ローカル相対パス (例: avif/xxx.avif) を検出し、
-    GitHub Raw URL (例: https://raw.githubusercontent.com/.../public/avif/xxx.avif) に置換する。
-
-    Returns:
-        置換した箇所の合計数
+    public/ 配下の Markdown ファイル内の画像パスを書き換える。
+    is_local_mode = False (公開モード): images/xxx.(png|jpg) -> GitHub AVIF URL
+    is_local_mode = True  (執筆モード): GitHub AVIF URL -> images/xxx.png
     """
-    # avif ディレクトリの public/ からの相対パスを取得
-    avif_rel = out_dir.relative_to(public_dir)  # "avif"
-    github_avif_url = f"{GITHUB_RAW_BASE}/public/{avif_rel}"
-
-    # ローカル相対パスのパターン (avif/xxx.avif)
-    # Markdown 画像構文: ![alt](avif/xxx.avif) の "avif/xxx.avif" 部分を置換
-    local_pattern = re.compile(
-        r"(?<!\S)"               # パスの前が空白または行頭
-        + re.escape(str(avif_rel).replace("\\", "/"))  # "avif"
-        + r"/([^\s\)]+\.avif)"   # ファイル名部分
-    )
-
     total_replacements = 0
+
+    if is_local_mode:
+        # 執筆モード: GitHub AVIF URL -> images/xxx.png に戻す
+        pattern = re.compile(r'(^|\s|\(|\[)' + re.escape(github_avif_url) + r'/([^\s\)]+)\.avif')
+        replacement = r'\1images/\2.png'
+    else:
+        # 公開モード: images/xxx.(png|jpg|jpeg) -> GitHub AVIF URL にする
+        pattern = re.compile(r'(^|\s|\(|\[)images/([^\s\)]+)\.(png|jpg|jpeg)')
+        replacement = rf'\1{github_avif_url}/\2.avif'
 
     for md_file in public_dir.glob("*.md"):
         content = md_file.read_text(encoding="utf-8")
 
-        # 既に GitHub Raw URL に変換済みの場合はスキップ
-        new_content, count = local_pattern.subn(
-            lambda m: f"{github_avif_url}/{m.group(1)}",
-            content,
-        )
+        new_content, count = pattern.subn(replacement, content)
 
         if count > 0:
             md_file.write_text(new_content, encoding="utf-8")
@@ -136,7 +125,6 @@ def update_markdown_image_paths(public_dir: Path, out_dir: Path) -> int:
             total_replacements += count
 
     return total_replacements
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -161,9 +149,20 @@ def main() -> None:
         help="Output directory (default: <project_root>/public/avif)",
     )
     parser.add_argument(
+        "--local",
+        action="store_true",
+        help="執筆モード: Revert GitHub URLs back to local images/xxx.png paths (does not run conversion)",
+    )
+    parser.add_argument(
         "--no-url-rewrite",
         action="store_true",
         help="Skip Markdown image path rewriting",
+    )
+    # lint-staged から渡されるファイルリストを受け取って無視するための引数
+    parser.add_argument(
+        "files",
+        nargs="*",
+        help="List of files (ignored, script processes the whole public/ dir)",
     )
     args = parser.parse_args()
 
@@ -173,20 +172,31 @@ def main() -> None:
     out_dir = Path(args.out) if args.out else project_root / "public" / "avif"
     public_dir = project_root / "public"
 
+    avif_rel = out_dir.relative_to(public_dir)
+    github_avif_url = f"{GITHUB_RAW_BASE}/public/{avif_rel}"
+
+    # ヘッダー表示
+    print("=" * 60)
+    print("  Image Pipeline" + (" [LOCAL MODE]" if args.local else ""))
+    print("=" * 60)
+
+    url_updates = 0
+
+    if args.local:
+        # --local が指定された場合は URL 置換のみ行って終了
+        print("  Reverting GitHub AVIF URLs to local images/ paths...")
+        url_updates = update_markdown_image_paths(public_dir, github_avif_url, is_local_mode=True)
+        print("=" * 60)
+        print(f"  URL rewrite: {url_updates} path(s) reverted to local")
+        print("=" * 60)
+        return
+
     # ディレクトリの存在確認
     if not src_dir.exists():
         print(f"[ERR] Source directory not found: {src_dir}")
         sys.exit(1)
 
     out_dir.mkdir(parents=True, exist_ok=True)
-
-    # ヘッダー表示
-    print("=" * 60)
-    print("  Image Pipeline: PNG/JPG -> AVIF")
-    print(f"  Source:  {src_dir}")
-    print(f"  Output:  {out_dir}")
-    print(f"  Quality: {args.quality}")
-    print("=" * 60)
 
     # ソース画像を検索
     source_images = find_source_images(src_dir)
@@ -200,6 +210,12 @@ def main() -> None:
         if deleted:
             print(f"\n  Cleanup: {deleted} orphaned AVIF(s) deleted")
             print("=" * 60)
+        
+        if not args.no_url_rewrite and public_dir.exists():
+            url_updates = update_markdown_image_paths(public_dir, github_avif_url, is_local_mode=False)
+            if url_updates:
+                print(f"  URL rewrite: {url_updates} path(s) updated in Markdown")
+                print("=" * 60)
         return
 
     # 変換処理
@@ -233,9 +249,8 @@ def main() -> None:
     deleted = cleanup_orphaned_avifs(out_dir, source_stems)
 
     # Markdown 内の画像パスを GitHub Raw URL に変換
-    url_updates = 0
     if not args.no_url_rewrite and public_dir.exists():
-        url_updates = update_markdown_image_paths(public_dir, out_dir)
+        url_updates = update_markdown_image_paths(public_dir, github_avif_url, is_local_mode=False)
 
     # サマリー表示
     print("\n" + "=" * 60)

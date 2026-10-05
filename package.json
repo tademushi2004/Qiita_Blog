@@ -4,13 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky",
+    "new": "node scripts/new_article.js"
+  },
+  "lint-staged": {
+    "public/*.md": [
+      ".venv/Scripts/python.exe scripts/convert_to_avif.py"
+    ]
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@qiita/qiita-cli": "^1.9.1"
+    "@qiita/qiita-cli": "^1.9.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0"
   }
 }
