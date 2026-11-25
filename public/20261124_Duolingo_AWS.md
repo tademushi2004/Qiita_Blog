@@ -7,8 +7,8 @@ tags:
   - Duolingo
   - 初心者
 private: true
-updated_at: ''
-id: null
+updated_at: '2026-11-25T22:35:23+09:00'
+id: 3e42b9cec4a719643284
 organization_url_name: null
 slide: false
 ignorePublish: false
